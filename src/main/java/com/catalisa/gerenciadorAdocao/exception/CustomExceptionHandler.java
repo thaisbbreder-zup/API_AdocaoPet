@@ -8,16 +8,33 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestControllerAdvice
 public class CustomExceptionHandler {
 
+    private FieldError error;
+
+    public static class DefaultError{
+        public String campo;
+
+        public String mensagem;
+
+
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<String> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        StringBuilder errors = new StringBuilder();
+    public ResponseEntity<List<DefaultError>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        List<DefaultError> defaultError = new ArrayList<>();
+
         for (FieldError error : ex.getBindingResult().getFieldErrors()) {
-            errors.append(error.getDefaultMessage()).append("\n");
+            var variavel = new DefaultError();
+            variavel.campo = error.getField();
+            variavel.mensagem = error.getDefaultMessage();
+            defaultError.add(variavel);
         }
-        return ResponseEntity.badRequest().body(errors.toString());
+        return ResponseEntity.badRequest().body(defaultError);
     }
 }

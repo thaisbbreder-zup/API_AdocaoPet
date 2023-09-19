@@ -1,7 +1,9 @@
 package com.catalisa.gerenciadorAdocao.controller;
 
 import com.catalisa.gerenciadorAdocao.model.AnimalModel;
+import com.catalisa.gerenciadorAdocao.model.ComentarioModel;
 import com.catalisa.gerenciadorAdocao.service.AnimalService;
+import com.catalisa.gerenciadorAdocao.service.ComentarioService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.Validator;
+import java.util.List;
 
 @RestController
 //@Api(value = "AnimalController")
@@ -22,7 +25,7 @@ public class AnimalController {
     AnimalService animalService;
 
     @Autowired
-    private Validator validator;
+    private ComentarioService comentarioService;
 
     //CADASTRAR NOVO ANIMAL
     @ApiOperation(value = "Cadastra um novo animal para ser adotado")
@@ -32,7 +35,7 @@ public class AnimalController {
         return new ResponseEntity<>(animalModel, HttpStatus.CREATED);
     }
 
-    //LISTAR TODOS ANIMAIS E POR NOME , TAMANHO E POR DISPONIVEL
+    //LISTAR TODOS ANIMAIS E POR NOME E TAMANHO
     @ApiOperation(value = "Lista todos os animais ou busca por filtro de nome ou tamanho")
     @GetMapping
     public ResponseEntity<Page<AnimalModel>> listarTodosAnimals(
@@ -79,4 +82,17 @@ public class AnimalController {
         animalService.deletarAnimal(id);
         return ResponseEntity.ok().body("Animal(a) excluído(a) com sucesso!");
     }
+
+    @PostMapping("/{id}/comentarios")
+    public ResponseEntity<ComentarioModel> adicionarComentario(@PathVariable Long id, @RequestBody @Valid String texto) {
+        ComentarioModel novoComentario = comentarioService.adicionarComentario(id, texto);
+        return new ResponseEntity<>(novoComentario, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{id}/comentarios")
+    public ResponseEntity<List<ComentarioModel>> listarComentarios(@PathVariable Long id) {
+        List<ComentarioModel> comentarios = comentarioService.listarComentarios(id);
+        return ResponseEntity.ok(comentarios);
+    }
+
 }

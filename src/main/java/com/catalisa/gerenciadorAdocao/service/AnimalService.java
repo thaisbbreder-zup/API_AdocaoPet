@@ -32,25 +32,14 @@ public class AnimalService {
     public Page<AnimalModel> getByNome(String nome, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<AnimalModel> pageResult = animalRepository.findByNome(nome, pageable);
-        if (pageResult.isEmpty()) {
-            throw new AnimalNaoEncontradoException("Nenhum animal com o nome: " + nome + " foi encontrado.");
-        }
         return pageResult;
     }
 
     public Page<AnimalModel> getByTamanho(String tamanho, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<AnimalModel> pageResult = animalRepository.findByTamanho(tamanho, pageable);
-        if (pageResult.isEmpty()) {
-            throw new AnimalNaoEncontradoException("Nenhum animal com o tamanho: " + tamanho + " foi encontrado.");
-        }
         return pageResult;
     }
-
-   /* public Page<AnimalModel> getByDisponibilidade(Boolean disponivelAdocao, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return animalRepository.findByDisponibilidade(disponivelAdocao, pageable);
-    }*/
 
     public AnimalModel getById(Long id) {
         return animalRepository.findById(id)
@@ -62,19 +51,11 @@ public class AnimalService {
 
         if (animalOptional.isPresent()) {
             AnimalModel animal = animalOptional.get();
-            /*animal.setNome(updateAnimal.getNome());
-            animal.setIdade(updateAnimal.getIdade());
-            animal.setTamanho(updateAnimal.getTamanho());
-            animal.setSexo(updateAnimal.getSexo());
-            animal.setDescricao(updateAnimal.getDescricao());
-            animal.setComentario(updateAnimal.getComentario());
-            animal.setDisponivelAdocao(updateAnimal.isDisponivelAdocao());*/
             return animalRepository.save(animal);
         } else {
              throw new AnimalNaoEncontradoException("Animal com o ID: " + id + " não encontrado.");
         }
     }
-
 
     public AnimalModel deletarAnimal(Long id) {
         Optional<AnimalModel> animalOptional = animalRepository.findById(id);
